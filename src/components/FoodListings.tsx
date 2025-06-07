@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Search, MapPin, Clock, User, Heart } from 'lucide-react';
+import { ArrowLeft, Search, MapPin, Clock, User, Heart, Phone, MessageCircle } from 'lucide-react';
 
 interface FoodListingsProps {
   onBack: () => void;
@@ -13,6 +13,7 @@ interface FoodListingsProps {
 const FoodListings = ({ onBack }: FoodListingsProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [requestedItems, setRequestedItems] = useState<Set<number>>(new Set());
 
   const foodListings = [
     {
@@ -23,6 +24,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
       location: 'Green Valley Restaurant, Downtown',
       distance: '0.8 km',
       donor: 'Green Valley Restaurant',
+      donorPhone: '+91 98765 43210',
       description: 'Fresh vegetable curry with basmati rice. Prepared this morning for a cancelled event.',
       image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=300&h=200&fit=crop',
       urgent: true,
@@ -36,6 +38,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
       location: 'Sunrise Bakery, Mall Road',
       distance: '1.2 km',
       donor: 'Sunrise Bakery',
+      donorPhone: '+91 98765 43211',
       description: 'Assorted fresh bread, croissants, and pastries from today\'s batch.',
       image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&h=200&fit=crop',
       urgent: false,
@@ -49,6 +52,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
       location: 'Paradise Banquet Hall, Sector 15',
       distance: '2.1 km',
       donor: 'Paradise Banquet Hall',
+      donorPhone: '+91 98765 43212',
       description: 'Various dishes from wedding reception: dal, sabzi, rice, roti, and sweets.',
       image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&h=200&fit=crop',
       urgent: true,
@@ -62,6 +66,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
       location: 'City Fresh Mart, Central Market',
       distance: '1.5 km',
       donor: 'City Fresh Mart',
+      donorPhone: '+91 98765 43213',
       description: 'Assorted fresh fruits - apples, bananas, oranges. Slightly overripe but good quality.',
       image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=300&h=200&fit=crop',
       urgent: false,
@@ -75,6 +80,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
       location: 'Home Kitchen, Rose Garden',
       distance: '0.5 km',
       donor: 'Priya Sharma',
+      donorPhone: '+91 98765 43214',
       description: 'Home-cooked dal, rice, and vegetables. Made for a family gathering that got cancelled.',
       image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=300&h=200&fit=crop',
       urgent: true,
@@ -93,11 +99,22 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
 
   const handleRequest = (listingId: number) => {
     const listing = foodListings.find(l => l.id === listingId);
-    alert(`Request sent for "${listing?.foodType}"! The donor will be notified and pickup details will be shared.`);
+    setRequestedItems(prev => new Set([...prev, listingId]));
+    alert(`Request sent for "${listing?.foodType}"! The donor will be notified and pickup details will be shared via SMS.`);
+  };
+
+  const handleCall = (phone: string, donorName: string) => {
+    if (confirm(`Call ${donorName} at ${phone}?`)) {
+      window.open(`tel:${phone}`);
+    }
+  };
+
+  const handleMessage = (listingId: number, donorName: string) => {
+    alert(`Opening chat with ${donorName}. You can coordinate pickup details here.`);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-4 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <Button 
@@ -108,7 +125,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Available Food</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Available Food</h1>
           <p className="text-gray-600">Find and request food donations in your area</p>
         </div>
 
@@ -124,11 +141,12 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
             />
           </div>
           
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 overflow-x-auto pb-2 md:pb-0">
             <Button
               variant={selectedFilter === 'all' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSelectedFilter('all')}
+              className="whitespace-nowrap"
             >
               All
             </Button>
@@ -136,6 +154,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
               variant={selectedFilter === 'urgent' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSelectedFilter('urgent')}
+              className="whitespace-nowrap"
             >
               Urgent
             </Button>
@@ -143,6 +162,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
               variant={selectedFilter === 'verified' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSelectedFilter('verified')}
+              className="whitespace-nowrap"
             >
               Verified
             </Button>
@@ -175,7 +195,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
         </Card>
 
         {/* Food Listings Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredListings.map((listing) => (
             <Card key={listing.id} className="card-hover overflow-hidden">
               <div className="relative">
@@ -184,21 +204,21 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
                   alt={listing.foodType}
                   className="w-full h-48 object-cover"
                 />
-                <div className="absolute top-3 left-3 flex space-x-2">
+                <div className="absolute top-3 left-3 flex flex-wrap gap-2">
                   {listing.urgent && (
-                    <Badge className="bg-red-500 text-white">
+                    <Badge className="bg-red-500 text-white text-xs">
                       <Clock className="w-3 h-3 mr-1" />
                       Urgent
                     </Badge>
                   )}
                   {listing.verified && (
-                    <Badge className="bg-green-500 text-white">
+                    <Badge className="bg-green-500 text-white text-xs">
                       ✓ Verified
                     </Badge>
                   )}
                 </div>
                 <div className="absolute top-3 right-3">
-                  <Badge variant="secondary" className="bg-white/90">
+                  <Badge variant="secondary" className="bg-white/90 text-xs">
                     {listing.distance}
                   </Badge>
                 </div>
@@ -215,7 +235,7 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
               </CardHeader>
               
               <CardContent className="pt-0">
-                <CardDescription className="mb-4">
+                <CardDescription className="mb-4 text-sm">
                   {listing.description}
                 </CardDescription>
                 
@@ -231,18 +251,50 @@ const FoodListings = ({ onBack }: FoodListingsProps) => {
                     </span>
                   </div>
                   <div className="flex items-center text-sm">
-                    <MapPin className="w-4 h-4 mr-1 text-gray-400" />
-                    <span className="text-gray-600">{listing.location}</span>
+                    <MapPin className="w-4 h-4 mr-1 text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-600 truncate">{listing.location}</span>
                   </div>
                 </div>
                 
-                <Button 
-                  onClick={() => handleRequest(listing.id)}
-                  className="w-full btn-primary"
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  Request This Food
-                </Button>
+                <div className="space-y-2">
+                  {!requestedItems.has(listing.id) ? (
+                    <Button 
+                      onClick={() => handleRequest(listing.id)}
+                      className="w-full btn-primary"
+                    >
+                      <Heart className="w-4 h-4 mr-2" />
+                      Request This Food
+                    </Button>
+                  ) : (
+                    <Button 
+                      disabled
+                      className="w-full bg-green-500 text-white"
+                    >
+                      ✓ Request Sent
+                    </Button>
+                  )}
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCall(listing.donorPhone, listing.donor)}
+                      className="text-xs"
+                    >
+                      <Phone className="w-3 h-3 mr-1" />
+                      Call
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleMessage(listing.id, listing.donor)}
+                      className="text-xs"
+                    >
+                      <MessageCircle className="w-3 h-3 mr-1" />
+                      Chat
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))}
