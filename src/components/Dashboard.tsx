@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -95,6 +94,23 @@ const Dashboard = ({ onBack }: DashboardProps) => {
     { area: 'Central Market', waste: 'Low', trend: 'down', color: 'text-green-600' }
   ];
 
+  // Quick Actions handlers
+  const handleAddDonation = () => {
+    alert('Redirecting to donation form...');
+  };
+
+  const handleSchedulePickup = () => {
+    alert('Opening pickup scheduler...');
+  };
+
+  const handleFindVolunteers = () => {
+    alert('Opening volunteer finder...');
+  };
+
+  const handleViewReports = () => {
+    alert('Generating detailed reports...');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -107,12 +123,12 @@ const Dashboard = ({ onBack }: DashboardProps) => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
               <p className="text-gray-600">Track your community's food rescue impact</p>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant={selectedPeriod === 'week' ? 'default' : 'outline'}
                 size="sm"
@@ -309,7 +325,7 @@ const Dashboard = ({ onBack }: DashboardProps) => {
               </CardContent>
             </Card>
 
-            {/* Impact Summary */}
+            {/* Environmental Impact */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Environmental Impact</CardTitle>
@@ -335,27 +351,47 @@ const Dashboard = ({ onBack }: DashboardProps) => {
               </CardContent>
             </Card>
 
-            {/* Quick Actions */}
+            {/* Quick Actions - Updated for responsiveness and functionality */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <Button className="w-full" variant="outline" size="sm">
-                  <Utensils className="w-4 h-4 mr-2" />
-                  Add Food Donation
+              <CardContent className="space-y-3">
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleAddDonation}
+                >
+                  <Utensils className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Add Food Donation</span>
                 </Button>
-                <Button className="w-full" variant="outline" size="sm">
-                  <Truck className="w-4 h-4 mr-2" />
-                  Schedule Pickup
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleSchedulePickup}
+                >
+                  <Truck className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Schedule Pickup</span>
                 </Button>
-                <Button className="w-full" variant="outline" size="sm">
-                  <Users className="w-4 h-4 mr-2" />
-                  Find Volunteers
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleFindVolunteers}
+                >
+                  <Users className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Find Volunteers</span>
                 </Button>
-                <Button className="w-full" variant="outline" size="sm">
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  View Reports
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleViewReports}
+                >
+                  <TrendingUp className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">View Reports</span>
                 </Button>
               </CardContent>
             </Card>
