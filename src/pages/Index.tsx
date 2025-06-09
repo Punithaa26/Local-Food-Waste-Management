@@ -51,7 +51,7 @@ const Index = () => {
       case 'pickup':
         return <PickupSchedule onBack={() => setActiveSection('home')} />;
       case 'dashboard':
-        return <Dashboard onBack={() => setActiveSection('home')} />;
+        return <Dashboard onBack={() => setActiveSection('home')} onNavigateTo={setActiveSection} />;
       default:
         return (
           <div className="min-h-screen">

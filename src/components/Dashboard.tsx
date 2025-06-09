@@ -7,9 +7,10 @@ import { ArrowLeft, TrendingUp, Users, Utensils, Truck, MapPin, Clock, Heart, St
 
 interface DashboardProps {
   onBack: () => void;
+  onNavigateTo?: (section: string) => void;
 }
 
-const Dashboard = ({ onBack }: DashboardProps) => {
+const Dashboard = ({ onBack, onNavigateTo }: DashboardProps) => {
   const [selectedPeriod, setSelectedPeriod] = useState('week');
 
   const stats = {
@@ -94,21 +95,28 @@ const Dashboard = ({ onBack }: DashboardProps) => {
     { area: 'Central Market', waste: 'Low', trend: 'down', color: 'text-green-600' }
   ];
 
-  // Quick Actions handlers
+  // Quick Actions handlers - Updated to navigate instead of showing alerts
   const handleAddDonation = () => {
-    alert('Redirecting to donation form...');
+    if (onNavigateTo) {
+      onNavigateTo('donate');
+    }
   };
 
   const handleSchedulePickup = () => {
-    alert('Opening pickup scheduler...');
+    if (onNavigateTo) {
+      onNavigateTo('pickup');
+    }
   };
 
   const handleFindVolunteers = () => {
-    alert('Opening volunteer finder...');
+    if (onNavigateTo) {
+      onNavigateTo('request');
+    }
   };
 
   const handleViewReports = () => {
-    alert('Generating detailed reports...');
+    // For now, scroll to the AI insights section since we don't have a separate reports page
+    document.getElementById('ai-insights')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -233,7 +241,7 @@ const Dashboard = ({ onBack }: DashboardProps) => {
             </Card>
 
             {/* AI Insights */}
-            <Card>
+            <Card id="ai-insights">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   🤖 AI Insights & Predictions
@@ -351,14 +359,15 @@ const Dashboard = ({ onBack }: DashboardProps) => {
               </CardContent>
             </Card>
 
-            {/* Quick Actions - Updated for responsiveness and functionality */}
+            {/* Quick Actions - Enhanced with proper navigation */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
+                <CardDescription className="text-sm">Navigate to key features</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
-                  className="w-full justify-start" 
+                  className="w-full justify-start hover:bg-green-50 hover:text-green-700 transition-colors" 
                   variant="outline" 
                   size="sm"
                   onClick={handleAddDonation}
@@ -367,7 +376,7 @@ const Dashboard = ({ onBack }: DashboardProps) => {
                   <span className="truncate">Add Food Donation</span>
                 </Button>
                 <Button 
-                  className="w-full justify-start" 
+                  className="w-full justify-start hover:bg-blue-50 hover:text-blue-700 transition-colors" 
                   variant="outline" 
                   size="sm"
                   onClick={handleSchedulePickup}
@@ -376,22 +385,22 @@ const Dashboard = ({ onBack }: DashboardProps) => {
                   <span className="truncate">Schedule Pickup</span>
                 </Button>
                 <Button 
-                  className="w-full justify-start" 
+                  className="w-full justify-start hover:bg-purple-50 hover:text-purple-700 transition-colors" 
                   variant="outline" 
                   size="sm"
                   onClick={handleFindVolunteers}
                 >
                   <Users className="w-4 h-4 mr-2 flex-shrink-0" />
-                  <span className="truncate">Find Volunteers</span>
+                  <span className="truncate">Find Food Requests</span>
                 </Button>
                 <Button 
-                  className="w-full justify-start" 
+                  className="w-full justify-start hover:bg-orange-50 hover:text-orange-700 transition-colors" 
                   variant="outline" 
                   size="sm"
                   onClick={handleViewReports}
                 >
                   <TrendingUp className="w-4 h-4 mr-2 flex-shrink-0" />
-                  <span className="truncate">View Reports</span>
+                  <span className="truncate">View AI Insights</span>
                 </Button>
               </CardContent>
             </Card>
